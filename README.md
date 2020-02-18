@@ -1,0 +1,10 @@
+# WebDeTechCC
+
+## GENERALIZE
+
+## TODO
+
+## UP & RUNNING
+
+## SCALING
+
