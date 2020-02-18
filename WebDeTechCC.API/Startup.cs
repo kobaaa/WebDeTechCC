@@ -28,12 +28,6 @@ namespace WebDeTechCC.API
         {
             services.AddControllers();
 
-            var clientHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-            };
-            services.AddSingleton(ctx => new HttpClient(clientHandler));
-
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {

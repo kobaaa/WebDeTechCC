@@ -17,10 +17,15 @@ namespace WebDeTechCC.API.Controllers
         private readonly ILogger<DetectWebTechController> _logger;
         private readonly HttpClient _httpClient;
 
-        public DetectWebTechController(ILogger<DetectWebTechController> logger, HttpClient httpClient)
+        public DetectWebTechController(ILogger<DetectWebTechController> logger)
         {
             _logger = logger;
-            _httpClient = httpClient;
+            
+            var clientHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            };
+            _httpClient = HttpClientFactory.Create(clientHandler);
         }
 
         /// <summary>
@@ -32,18 +37,18 @@ namespace WebDeTechCC.API.Controllers
         ///     POST /
         /// 
         ///     [
-        ///       "demo.nginx.com", "www.google.com", "www.wikipedia.org"
+        ///       "www.nginx.com", "www.google.com", "www.wikipedia.org"
         ///     ]
         ///
         /// </remarks>
         /// <returns>A list of host-IPs pairs that run Nginx</returns>
         [HttpPost("nginx")]
-        // public async Task<IEnumerable<HostModel>> CheckDomainNames(string[] items)
         public async Task<List<Dictionary<string, IEnumerable<string>>>> CheckDomainNamesForNginx(
             IEnumerable<string> domains)
         {
+            const string NGINX_TITLE = "nginx";
             var hostIpsList = new List<Dictionary<string, IEnumerable<string>>>();
-
+           
             var tasks = domains
                 .Select(async domain =>
                 {
@@ -52,7 +57,7 @@ namespace WebDeTechCC.API.Controllers
                     {
                         var response = await _httpClient.GetAsync(host.Uri);
                         var serverHeader = response.Headers?.Server;
-                        if (serverHeader != null && serverHeader.ToString().ToLower().Contains("nginx"))
+                        if (serverHeader != null && serverHeader.ToString().ToLower().Contains(NGINX_TITLE))
                             hostIpsList.Add(new Dictionary<string, IEnumerable<string>>
                                 {{host.SafeHost, host.Ips}});
                     }
@@ -72,7 +77,7 @@ namespace WebDeTechCC.API.Controllers
         ///     POST /
         /// 
         ///     [
-        ///       "demo.nginx.com", "www.google.com", "www.wikipedia.org"
+        ///       "www.nginx.com", "www.google.com", "www.wikipedia.org"
         ///     ]
         ///
         /// </remarks>
@@ -81,7 +86,7 @@ namespace WebDeTechCC.API.Controllers
         public async Task<List<HostInfoDto>> CheckDomainNames(IEnumerable<string> domains)
         {
             var hostInfoDtos = new List<HostInfoDto>();
-
+            
             var tasks = domains
                 .Select(async domain =>
                 {
@@ -94,6 +99,7 @@ namespace WebDeTechCC.API.Controllers
                             SafeHost = host.SafeHost,
                             Uri = host.Uri
                         };
+
                         var response = await _httpClient.GetAsync(host.Uri);
 
                         // analyze cookies
