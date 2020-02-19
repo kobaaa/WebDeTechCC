@@ -12,6 +12,7 @@ Two endpoints receiving a list of domain names:
 
 Both endpoint responses contain IPs associated with hostnames.
 
+
 ## UP & RUNNING
 
 ```sh
@@ -22,10 +23,10 @@ docker build -t web-tech-detect .
 docker run -p 8080:80 --name webdetect web-tech-detect 
 ```
 
-* SWAGGER UI
+### SWAGGER UI 
 http://localhost:8080/index.html
 
-* USAGE
+### USAGE
 curl -X POST "http://localhost:8080/api/DetectWebTech/nginx" -H  "accept: application/json" -H  "Content-Type: application/json" -d "[\"www.nginx.com\",\"www.google.com\"]"
 
 
@@ -44,6 +45,7 @@ curl -X POST "http://localhost:8080/api/DetectWebTech/nginx" -H  "accept: applic
 - [ ] tests
 - [ ] monitoring and health-check
 
+
 ## SCALING IDEAS
 
 - elaborate caching policy
@@ -51,4 +53,3 @@ curl -X POST "http://localhost:8080/api/DetectWebTech/nginx" -H  "accept: applic
 - decouple independent functionality (IP lookup, get-requests, url-analyzers, etc) to microservices/lambdas
 - batch processing to handle requests with huge payload
 - more advanced: consider service mesh (abstract away infrastructure, reduce vendor-lock, utilize on-premise resources, etc)
-
